@@ -40,16 +40,35 @@ public abstract class Character {
     }
 
     public int special() {
-        if (sp < 5) return -1;
-        final int specialDamage = specialCalc();
-        sp = 0;
-        return specialDamage;
+        if ( !isCanSpecial() ) return -1;
+        return executeSpecialDamage();
     }
 
     public abstract int specialCalc();
     public abstract void listAction();
     public abstract boolean act(int type, Character c);
 
+    private boolean isCanSpecial() {
+        return sp >= 5;
+    }
+
+    private int executeSpecialDamage() {
+        // specialCalc実行時SP変動の可能性
+        final int specialDamage = specialCalc();
+        sp = 0;
+        return specialDamage;
+    }
+
+    protected boolean specialAction( Character target ) {
+        final int damage = special();
+        if (damage == -1) {
+            System.out.println("lack of SP");
+            return false;
+        }
+        System.out.println("special");
+        target.addDamage(damage);
+        return true;
+    }
     @Override
     public String toString() {
         return String.format(

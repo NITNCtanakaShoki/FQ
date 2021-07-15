@@ -19,10 +19,6 @@ public class Sorcerer extends Character implements Wizard {
         System.out.println("1:attack, 2:magic, 4:concentrate, 5:special");
     }
 
-    //消す
-    public int getConcentration() {
-        return concentration;
-    }
 
     @Override
     public boolean act(int type, Character c) {
@@ -47,16 +43,6 @@ public class Sorcerer extends Character implements Wizard {
     private boolean concentrateAction() {
         System.out.println("concentrate");
         concentrate();
-        return true;
-    }
-    private boolean specialAction(Character c) {
-        final int damage = special();
-        if (damage == -1) {
-            System.out.println("lack of SP");
-            return false;
-        }
-        System.out.println("special");
-        c.addDamage(damage);
         return true;
     }
 
