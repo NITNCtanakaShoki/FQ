@@ -12,6 +12,7 @@ public class CharacterTest {
         }
         @Override
         public int specialCalc() {
+            super.attack();
             return 10;
         }
         @Override
@@ -24,19 +25,21 @@ public class CharacterTest {
     private CharacterChild character3;
 
     @BeforeEach
-    public void インスタンス化() {
+    public void SetUp() {
         character1 = new CharacterChild("名前", 34, 300, 0);
-        assertEquals("名前 HP:34 SP:0", character1.toString());
-
         character2 = new CharacterChild("name", 0,11, 1);
-        assertEquals("name HP:0 SP:0", character2.toString());
-
         character3 = new CharacterChild("ne", 1, 0, 40);
+    }
+
+    @Test
+    public void toStringのテスト() {
+        assertEquals("名前 HP:34 SP:0", character1.toString());
+        assertEquals("name HP:0 SP:0", character2.toString());
         assertEquals("ne HP:1 SP:0", character3.toString());
     }
 
     @Test
-    public void nameのgetter() {
+    public void nameのgetterのテスト() {
         assertEquals("名前", character1.getName());
         assertEquals("name", character2.getName());
         assertEquals("ne", character3.getName());
@@ -52,20 +55,30 @@ public class CharacterTest {
     }
 
     @Test
-    public void attackのテスト() {
+    public void attackのダメージ量のテスト() {
         assertEquals(600, character1.attack());
         assertEquals(22, character2.attack());
 
+
+    }
+
+    @Test
+    public void attackのSP増加テスト() {
+        character1.attack();
         assertEquals("名前 HP:34 SP:1", character1.toString());
         character1.attack();
         assertEquals("名前 HP:34 SP:2", character1.toString());
     }
 
     @Test
-    public void magicのテスト() {
+    public void magicのダメージ量のテスト() {
         assertEquals(0, character1.magic());
         assertEquals(2, character2.magic());
+    }
 
+    @Test
+    public void magicのSP増加のテスト() {
+        character1.magic();
         assertEquals("名前 HP:34 SP:1", character1.toString());
         character1.magic();
         assertEquals("名前 HP:34 SP:2", character1.toString());
@@ -91,18 +104,22 @@ public class CharacterTest {
 
     @Test
     public void specialのテスト() {
+        // SPが0のとき
         assertEquals(-1, character1.special());
         assertEquals("名前 HP:34 SP:0", character1.toString());
 
+        // SPが4のとき
         character1.addSP(4);
         assertEquals(-1, character1.special());
         assertEquals("名前 HP:34 SP:4", character1.toString());
 
+        // SPが5のとき
         character1.addSP(1);
         assertEquals(10, character1.special());
         assertEquals("名前 HP:34 SP:0", character1.toString());
 
-        character1.addSP(5);
+        // SPが6のとき
+        character1.addSP(6);
         assertEquals(10, character1.special());
         assertEquals("名前 HP:34 SP:0", character1.toString());
     }

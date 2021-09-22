@@ -1,6 +1,8 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Scanner;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -8,16 +10,26 @@ public class SorcererTest {
     private Sorcerer sorcerer1;
     private Sorcerer sorcerer2;
     private Sorcerer sorcerer3;
+    private Scanner scanner;
 
     @BeforeEach
     public void インスタンス化() {
+        scanner = new Scanner(new StdOutSnatcher());
         sorcerer1 = new Sorcerer("名前", 34, 300, 0);
-        assertEquals("名前 HP:34 SP:0", sorcerer1.toString());
-
         sorcerer2 = new Sorcerer("name", 0,11, 1);
-        assertEquals("name HP:0 SP:0", sorcerer2.toString());
-
         sorcerer3 = new Sorcerer("ne", 1, 0, 40);
+    }
+
+    @Test
+    public void 継承のテスト() {
+        Wizard wizard = sorcerer1;
+        Character character = sorcerer2;
+    }
+
+    @Test
+    public void toStringのテスト() {
+        assertEquals("名前 HP:34 SP:0", sorcerer1.toString());
+        assertEquals("name HP:0 SP:0", sorcerer2.toString());
         assertEquals("ne HP:1 SP:0", sorcerer3.toString());
     }
 
@@ -92,6 +104,12 @@ public class SorcererTest {
     }
 
     @Test
+    public void listActionのテスト() {
+        sorcerer1.listAction();
+        assertEquals("1:attack, 2:magic, 4:concentrate, 5:special", scanner.nextLine());
+    }
+
+    @Test
     public void specialのテスト() {
         assertEquals(-1, sorcerer3.special());
         assertEquals("ne HP:1 SP:0", sorcerer3.toString());
@@ -112,26 +130,42 @@ public class SorcererTest {
     }
 
     @Test
-    public void act1のテスト() {
+    public void act1のダメージ量のテスト() {
        assertTrue(sorcerer2.act(1, sorcerer3));
        assertEquals("name HP:0 SP:1", sorcerer2.toString());
        assertEquals("ne HP:-21 SP:0", sorcerer3.toString());
     }
 
     @Test
-    public void act2のテスト() {
+    public void act1の表示のテスト() {
+        assertTrue( sorcerer1.act(1, sorcerer1) );
+        assertEquals("attack", scanner.next());
+    }
+
+    @Test
+    public void act2のダメージ量のテスト() {
         assertTrue(sorcerer3.act(2, sorcerer2));
         assertEquals("name HP:-80 SP:0", sorcerer2.toString());
         assertEquals("ne HP:1 SP:1", sorcerer3.toString());
     }
 
     @Test
+    public void act2の表示のテスト() {
+        assertTrue(sorcerer3.act(2, sorcerer2));
+        assertEquals("magic", scanner.next());
+    }
+
+    @Test
     public void act4のテスト() {
         assertEquals(80, sorcerer3.magic());
-
         assertTrue( sorcerer3.act(4, sorcerer2) );
-
         assertEquals(160, sorcerer3.magic());
+    }
+
+    @Test
+    public void act4の表示のテスト() {
+        sorcerer3.act(4, sorcerer2);
+        assertEquals("concentrate", scanner.next());
     }
 
     @Test
@@ -172,4 +206,25 @@ public class SorcererTest {
         assertEquals("ne HP:1 SP:0", sorcerer3.toString());
     }
 
+    @Test
+    public void act5の表示のテスト() {
+
+        sorcerer1.act(5, sorcerer2);
+        assertEquals("lack of SP", scanner.nextLine());
+
+        sorcerer1.addSP(5);
+        sorcerer1.act(5, sorcerer2);
+        assertEquals("special", scanner.nextLine());
+
+        sorcerer1.act(5, sorcerer2);
+        assertEquals("lack of SP", scanner.nextLine());
+    }
+
+    @Test
+    public void actその他() {
+        assertFalse( sorcerer2.act(3, sorcerer1) );
+        assertEquals("Invalid input!", scanner.nextLine());
+        assertFalse( sorcerer2.act(6, sorcerer1) );
+        assertEquals("Invalid input!", scanner.nextLine());
+    }
 }
